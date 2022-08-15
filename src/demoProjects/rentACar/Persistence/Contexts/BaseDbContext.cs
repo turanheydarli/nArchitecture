@@ -22,9 +22,13 @@ namespace Persistence.Contexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //if (!optionsBuilder.IsConfigured)
-            //    base.OnConfiguring(
-            //        optionsBuilder.UseSqlServer(Configuration.GetConnectionString("SomeConnectionString")));
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseNpgsql(Configuration.GetConnectionString("PgSql")
+                 ?? throw new NullReferenceException("Assign connection string in appsettings.json"))
+                 .EnableSensitiveDataLogging();
+            }
+               
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
