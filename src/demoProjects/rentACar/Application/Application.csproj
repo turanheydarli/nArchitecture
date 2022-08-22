@@ -8,10 +8,22 @@
 
   <ItemGroup>
     <Folder Include="Features\" />
+    <Folder Include="Features\Brands\Constants" />
+    <Folder Include="Features\Brands\Models" />
+    <Folder Include="Features\Brands\Queries" />
+    <Folder Include="Features\Brands\Rules" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="11.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="MediatR" Version="10.0.1" />
+    <PackageReference Include="MediatR.Contracts" Version="1.0.1" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
   </ItemGroup>
 
 </Project>
