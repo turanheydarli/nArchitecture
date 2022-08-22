@@ -11,10 +11,10 @@
     <Folder Include="Features\Brands\Constants" />
     <Folder Include="Features\Brands\Models" />
     <Folder Include="Features\Brands\Queries" />
-    <Folder Include="Features\Brands\Rules" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\corePackages\Core.CrossCuttingConcers\Core.CrossCuttingConcerns.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
