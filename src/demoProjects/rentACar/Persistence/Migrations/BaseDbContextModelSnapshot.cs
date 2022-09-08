@@ -50,6 +50,54 @@ namespace Persistence.Migrations
                             Name = "Mec"
                         });
                 });
+
+            modelBuilder.Entity("Domain.Entities.Model", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("Id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BrandId")
+                        .HasColumnType("integer")
+                        .HasColumnName("BrandId");
+
+                    b.Property<decimal>("DailyPrice")
+                        .HasColumnType("numeric")
+                        .HasColumnName("DailyPrice");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text")
+                        .HasColumnName("ImageUrl");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text")
+                        .HasColumnName("Name");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BrandId");
+
+                    b.ToTable("Models", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Model", b =>
+                {
+                    b.HasOne("Domain.Entities.Brand", "Brand")
+                        .WithMany("Models")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Brand");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Brand", b =>
+                {
+                    b.Navigation("Models");
+                });
 #pragma warning restore 612, 618
         }
     }

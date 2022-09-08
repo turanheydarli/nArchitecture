@@ -1,49 +1,58 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Persistence.Contexts
+namespace Persistence.Contexts;
+
+public class BaseDbContext : DbContext
 {
-    public class BaseDbContext:DbContext
+    protected IConfiguration Configuration { get; set; }
+
+    public DbSet<Brand> Brands { get; set; }
+    public DbSet<Model> Models { get; set; }
+
+    public BaseDbContext(DbContextOptions dbContextOptions, IConfiguration configuration)
     {
-        protected IConfiguration Configuration { get; set; }
+        Configuration = configuration;
+    }
 
-        public DbSet<Brand> Brands { get; set; }
-
-        public BaseDbContext(DbContextOptions dbContextOptions, IConfiguration configuration)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
         {
-            Configuration = configuration;
+            optionsBuilder.UseNpgsql(Configuration.GetConnectionString("PgSql")
+                                     ?? throw new NullReferenceException(
+                                         "Assign connection string in app settings.json"))
+                .EnableSensitiveDataLogging();
         }
+    }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Brand>(b =>
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseNpgsql(Configuration.GetConnectionString("PgSql")
-                 ?? throw new NullReferenceException("Assign connection string in appsettings.json"))
-                 .EnableSensitiveDataLogging();
-            }
-               
-        }
+            b.ToTable("Brands");
+            b.Property(p => p.Id).HasColumnName("Id");
+            b.Property(p => p.Name).HasColumnName("Name");
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+            b.HasMany(p => p.Models);
+        });
+
+
+        modelBuilder.Entity<Model>(m =>
         {
-            modelBuilder.Entity<Brand>(b =>
-            {
-                b.ToTable("Brands");
-                b.Property(p => p.Id).HasColumnName("Id");
-                b.Property(p => p.Name).HasColumnName("Name");
-                
-            });
+            m.ToTable("Models");
+            m.Property(p => p.Id).HasColumnName("Id");
+            m.Property(p => p.BrandId).HasColumnName("BrandId");
+            m.Property(p => p.Name).HasColumnName("Name");
+            m.Property(p => p.DailyPrice).HasColumnName("DailyPrice");
+            m.Property(p => p.ImageUrl).HasColumnName("ImageUrl");
 
-            Brand[] brandEntitySeeds = { new Brand { Id = 1, Name= "BMW"}, new Brand { Id = 2, Name = "Mec" } };
+            m.HasOne(p => p.Brand);
+        });
 
-            modelBuilder.Entity<Brand>().HasData(brandEntitySeeds);
-        }
+        Brand[] brandEntitySeeds = { new Brand { Id = 1, Name = "BMW" }, new Brand { Id = 2, Name = "Mec" } };
+        modelBuilder.Entity<Brand>().HasData(brandEntitySeeds);
+
     }
 }
