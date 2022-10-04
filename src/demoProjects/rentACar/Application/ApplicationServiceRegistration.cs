@@ -1,7 +1,9 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using Application.Features.Auths.Rules;
 using Application.Features.Brands.Rules;
+using Application.Services.AuthService;
 using Core.Application.Pipelines.Validation;
 using FluentValidation;
 
@@ -15,6 +17,7 @@ public static class ApplicationServiceRegistration
         services.AddMediatR(Assembly.GetExecutingAssembly());
 
         services.AddScoped<BrandBusinessRules>();
+        services.AddScoped<AuthBusinessRules>();
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehavior<,>));
@@ -23,6 +26,8 @@ public static class ApplicationServiceRegistration
         //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
 
+        services.AddScoped<IAuthService, AuthManager>();
+        
         return services;
     }
 }
